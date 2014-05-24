@@ -12,8 +12,18 @@
 #import "PTInputSourceThread.h"
 #import "PTObserverThread.h"
 
+#include <time.h>
+
+clock_t entryTM = 0;
+clock_t exitTM = 0;
+
 void mainRunLoopObserver(CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info)
 {
+    //可以用于测量主线程的卡顿时间
+    exitTM = clock();
+    NSLog(@"Total: %.5fs", (exitTM - entryTM) * 1.0/CLOCKS_PER_SEC);
+    entryTM = clock();
+    
     CFStringRef mode = CFRunLoopCopyCurrentMode(CFRunLoopGetMain());
     NSLog(@"Current main thread run loop mode: %@", (__bridge NSString *)mode);
     
@@ -67,7 +77,7 @@ void mainRunLoopObserver(CFRunLoopObserverRef observer, CFRunLoopActivity activi
     [self.window makeKeyAndVisible];
    
     //NSThread subclass and run loop example
-    [self launchRunLoopThread];
+    //[self launchRunLoopThread];
     
     //NSThread with CFRunLoop
     //[self lauchCFRunLoopThread];
@@ -154,7 +164,7 @@ void mainRunLoopObserver(CFRunLoopObserverRef observer, CFRunLoopActivity activi
 - (void)addMainRunLoopObserver
 {
     CFRunLoopObserverContext  context = {0, (__bridge void *)(self), NULL, NULL, NULL};
-    CFRunLoopObserverRef observer = CFRunLoopObserverCreate(kCFAllocatorDefault, kCFRunLoopEntry, YES, 0, &mainRunLoopObserver, &context);
+    CFRunLoopObserverRef observer = CFRunLoopObserverCreate(kCFAllocatorDefault, kCFRunLoopAllActivities, YES, 0, &mainRunLoopObserver, &context);
     if (observer)
     {
         CFRunLoopAddObserver(CFRunLoopGetMain(), observer,
