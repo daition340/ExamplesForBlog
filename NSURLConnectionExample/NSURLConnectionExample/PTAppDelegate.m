@@ -12,9 +12,25 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    
+    for (int i=0; i<100; i++) {
+        NSString *label = [NSString stringWithFormat:@"com.Google.DownloadQueue"];
+        dispatch_queue_t downloadQueue = dispatch_queue_create([label UTF8String], DISPATCH_QUEUE_CONCURRENT);
+        dispatch_async(downloadQueue, ^{
+           
+            NSLog(@"current thread is %@",[NSThread currentThread]);
+            
+        });
+    }
+    dispatch_queue_t main_queue = dispatch_get_main_queue();
+    dispatch_queue_t global_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    
+    
     return YES;
 }
-							
+
+
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

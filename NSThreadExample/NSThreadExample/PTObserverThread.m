@@ -64,7 +64,7 @@ static int ObserverThreadTaskIndex = 0;
         
         // Create a run loop observer and attach it to the run loop.
         CFRunLoopObserverContext  context = {0, (__bridge void *)(self), NULL, NULL, NULL};
-        CFRunLoopObserverRef observer = CFRunLoopObserverCreate(kCFAllocatorDefault, kCFRunLoopBeforeTimers, YES, 0, &myRunLoopObserver, &context);  
+        CFRunLoopObserverRef observer = CFRunLoopObserverCreate(kCFAllocatorDefault, kCFRunLoopAllActivities, YES, 0, &myRunLoopObserver, &context);
         if (observer)
         {
             CFRunLoopAddObserver(CFRunLoopGetCurrent(), observer,

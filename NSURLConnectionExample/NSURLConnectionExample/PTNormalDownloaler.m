@@ -78,6 +78,7 @@
 
 - (void)cancel
 {
+    
     if (self.connection)
     {
         [self.connection cancel];
