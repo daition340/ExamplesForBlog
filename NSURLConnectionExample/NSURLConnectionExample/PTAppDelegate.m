@@ -12,7 +12,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    
+    return YES;
     for (int i=0; i<100; i++) {
         NSString *label = [NSString stringWithFormat:@"com.Google.DownloadQueue"];
         dispatch_queue_t downloadQueue = dispatch_queue_create([label UTF8String], DISPATCH_QUEUE_CONCURRENT);

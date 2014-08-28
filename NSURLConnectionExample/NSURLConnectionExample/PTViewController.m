@@ -13,6 +13,7 @@
 
 @interface PTViewController ()
 
+@property (nonatomic, strong) NSOperationQueue *queue;
 @end
 
 @implementation PTViewController
@@ -24,6 +25,11 @@
     button.frame = CGRectMake(100, 100, 100, 30);
     [button addTarget:self action:@selector(toggleButton) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:button];
+    
+    button = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+    button.frame = CGRectMake(200, 100, 100, 30);
+    [button addTarget:self action:@selector(cancel) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:button];
 }
 
 - (void)didReceiveMemoryWarning
@@ -32,21 +38,25 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)cancel {
+    [self.queue cancelAllOperations];
+}
+
 - (void)toggleButton
 {
     NSString *URLString = @"http://farm7.staticflickr.com/6191/6075294191_4c8ca20409.jpg";
        
     //Use PTNormalDownloaler 
-    PTNormalDownloaler *downloader = [PTNormalDownloaler
-                                      downloadWithURL:[NSURL URLWithString:URLString]
-                                      timeoutInterval:15
-                                              success:^(id responseData){
-                                                  NSLog(@"get data size: %d", [(NSData *)responseData length]);
-                                                  NSLog(@"success block in main thread?: %d", [NSThread isMainThread]);
-                                              }
-                                              failure:^(NSError *error){
-                                                  NSLog(@"failure block in main thread?: %d", [NSThread isMainThread]);
-                                              }];
+//    PTNormalDownloaler *downloader = [PTNormalDownloaler
+//                                      downloadWithURL:[NSURL URLWithString:URLString]
+//                                      timeoutInterval:15
+//                                              success:^(id responseData){
+//                                                  NSLog(@"get data size: %d", [(NSData *)responseData length]);
+//                                                  NSLog(@"success block in main thread?: %d", [NSThread isMainThread]);
+//                                              }
+//                                              failure:^(NSError *error){
+//                                                  NSLog(@"failure block in main thread?: %d", [NSThread isMainThread]);
+//                                              }];
 
     //Use PTThreadDownloaler
 //    PTThreadDownloader *downloader = [PTThreadDownloader
@@ -62,20 +72,20 @@
     
     
     //Use PTOperationDownloader
-//    PTOperationDownloader *downloader = [PTOperationDownloader
-//                                        downloadWithURL:[NSURL URLWithString:URLString]
-//                                        timeoutInterval:15
-//                                        success:^(id responseData){
-//                                            NSLog(@"get data size: %d", [(NSData *)responseData length]);
-//                                            NSLog(@"success block in main thread?: %d", [NSThread isMainThread]);
-//                                        }
-//                                        failure:^(NSError *error){
-//                                            NSLog(@"failure block in main thread?: %d", [NSThread isMainThread]);
-//                                        }];
-//    
-//    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
-//    [queue addOperation:downloader];NSBlockOperation
+    PTOperationDownloader *downloader = [PTOperationDownloader
+                                        downloadWithURL:[NSURL URLWithString:URLString]
+                                        timeoutInterval:15
+                                        success:^(id responseData){
+                                            NSLog(@"get data size: %d", [(NSData *)responseData length]);
+                                            NSLog(@"success block in main thread?: %d", [NSThread isMainThread]);
+                                        }
+                                        failure:^(NSError *error){
+                                            NSLog(@"failure block in main thread?: %d", [NSThread isMainThread]);
+                                        }];
     
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    [queue addOperation:downloader];
+    self.queue = queue;
     NSLog(@"started downloader: %@", downloader.URL.absoluteString);
 }
 
